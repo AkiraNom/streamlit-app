@@ -10,6 +10,7 @@ import plot_func
 import sankey_data
 import utils
 
+
 # Layout-sidebar: displays the headers
 
 st.sidebar.markdown('''
@@ -19,17 +20,28 @@ st.sidebar.markdown('''
 
 ''', unsafe_allow_html=True)
 
+# main layout
 
 # company logo
 logo_path = R"./images/Tesla_logo.png"
 logo = utils.read_image(logo_path)
 
 st.markdown(
-    f'<img src="data:image/gif;base64,{logo}" alt="logo tesla" width="100">',
+    f'<img src="data:image/gif;base64,{logo}" alt="logo tesla" width="300" class="logo">',
     unsafe_allow_html=True,
 )
 
-# main layout
+st.markdown(f'''<div class="top-page">
+                <p>
+                    Tesla.Inc was founded in San Carlos, California in 2003 by <i> Martin Eberhard </i>
+                    and <i>Marc Tarpenning </i> and currently led by <span><i> Elon Musk </i></span> in Austin, Texas.
+                    Tesla designs, manufactures and sells electric vehicles, stationary battery energy storage devices
+                    from home to grid-scale, solar panels and solar shingles, and related products and services
+            </p>
+            </div>
+            ''', unsafe_allow_html=True)
+
+utils.button_company_link()
 
 # header 1
 st.header('Header 1', anchor='header-1',divider='blue')
@@ -123,13 +135,23 @@ st.header('Visualize Tesla Income Statement', anchor='header-4', divider='blue')
 df, link, report_name = sankey_data.tesla_sankey_data()
 st.plotly_chart(plot_func.plot_sankey_diagram(df,link, report_name),use_container_width=True)
 
-st.markdown('''
-                    <div class="custom-button">
-            <a target="_self" href="#header-1">
-                <button>
-                    <i class="fas fa-chevron-down"></i>
-                </button>
+utils.add_scroll_button('#header-4')
+
+
+news = yf.Ticker('TSLA').news
+st.dataframe(news, use_container_width=True)
+
+
+st.write('''
+         <main class="main">
+        <div>
+            <a href="#" class="btn yellow">
+                <span>Hover Me</span>
+                <ion-icon name="arrow-forward"></ion-icon>
             </a>
         </div>
-            ''', unsafe_allow_html=True)
+    </main>
 
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+
+         ''', unsafe_allow_html=True)

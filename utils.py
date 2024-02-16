@@ -15,12 +15,22 @@ def read_image(path):
 
     return data_url
 
+# get company description through yfinance
+def button_company_link():
+    return st.markdown(f'''
+                    <div>
+            <a href="https://tesla.com" class="link-button">
+                <button>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </a>
+        </div>
+            ''', unsafe_allow_html=True)
+
 
 # get stock price through yfinance
 def get_stock_price(ticker_info, period1='1y', period2='max'):
-# obtain last 2 years stock price for plot
-# other valid period option: “1d”, “5d”, “1mo”,
-#“3mo”, “6mo”, “1y”, “2y”, “5y”, “10y”, “ytd”, “max”
+
       return (ticker_info.history(period=period1),
               ticker_info.history(period=period2),
               datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -81,14 +91,27 @@ st.markdown('''    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/aja
             }
         </style>
 
-    <div class="custom-button">
-        <a target="_self" href="#header-1">
-            <button>
-                <i class="fas fa-chevron-down"></i>
-            </button>
-        </a>
-    </div>''', unsafe_allow_html=True)
+    ''', unsafe_allow_html=True)
 
+st.markdown('''
+            <style>
+            .logo {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;
+            }
+            .top-page p{
+
+                font-size: 20px;
+                font-weight:bold;
+                text-align: center;
+            }
+            .top-page span {
+                color: orange;
+            }
+            </style>
+            ''', unsafe_allow_html=True)
 
 
 def add_scroll_button(navigation_target: str):
@@ -101,3 +124,81 @@ def add_scroll_button(navigation_target: str):
             </a>
         </div>
             ''', unsafe_allow_html=True)
+
+
+def test_button():
+    return st.markdown('''
+                       <style>
+                       .main{
+                           width: 80%;
+                           height: 100vh;
+                           display: flex;
+                           justify-content: space-around;
+                           align-items: center;
+                           margin: 0 auto;
+                        }
+                    .btn {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        min-width:220.52px;
+                        min-height: 56px;
+                        font-family: calibri;
+                        border: none;
+                        border-radius: 100px;
+                        cursor: pointer;
+                        font-weight: 400;
+                        text-decoration: none;
+                        transition: all 0.5s linear;
+                        }
+
+                        span {
+                            font-size: 30px;
+                            font-weight: 700;
+                            padding: 0 10px;
+                        }
+
+                        ion-icon {
+                            font-size: 2em;
+                            transition: all 0.5s linear;
+                        }
+
+                        .btn:hover ion-icon {
+                            transform: rotate(-90deg);
+
+                        }
+
+                        div {
+                            position: relative;
+                        }
+
+                        .yellow {
+                            /* background: #0ebac5; */
+                            background: none;
+                            color: black;
+                        }
+
+                        .yellow::before {
+                            content: "";
+                            display: block;
+                            width: 56px;
+                            height: 100%;
+                            background-color:#0ebac5;
+                            position: absolute;
+                            border-radius: 100px;
+                            left: 1em;
+                            z-index: -1;
+                            transition: all 600ms ease;
+                        }
+
+                        .yellow:hover::before {
+                            width: 100%;
+                        }
+
+                        .yellow:hover ion-icon {
+                            transform: translateX(10px);
+                        }
+                    </style>
+
+
+                       ''', unsafe_allow_html=True)
