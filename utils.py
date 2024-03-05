@@ -3,8 +3,6 @@ import datetime
 import pandas as pd
 import streamlit as st
 
-import yfinance
-
 def read_image(path):
     """image from local file"""
 
@@ -15,18 +13,18 @@ def read_image(path):
 
     return data_url
 
-# get company description through yfinance
-def button_company_link():
-    return st.markdown(f'''
-                    <div>
-            <a href="https://tesla.com" class="link-button">
-                <button>
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+# navigation button to the tesla website
+def tesla_html_link():
+    return st.markdown('''
+            <a href="https://tesla.com" class="cta">
+            <span>To web</span>
+            <svg width="13px" height="10px" viewBox="0 0 13 10">
+                <path d="M1,5 L11,5"></path>
+                <polyline points="8 1 12 5 8 9"></polyline>
+            </svg>
             </a>
-        </div>
-            ''', unsafe_allow_html=True)
-
+            <div><br></div>
+                    ''', unsafe_allow_html=True)
 
 # get stock price through yfinance
 def get_stock_price(ticker_info, period1='1y', period2='max'):
@@ -35,83 +33,62 @@ def get_stock_price(ticker_info, period1='1y', period2='max'):
               ticker_info.history(period=period2),
               datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-# get cash flow data through yfinance
-def get_cash_flow_data(ticker_info):
+# get financial and cash flow data through yfinance
+def get_financial_data(ticker_info, document_type:str, period='annual'):
 
-    cash_flow_yr = ticker_info.cash_flow
-    cash_flow_yr.columns = cash_flow_yr.columns.year
+    if document_type == 'financial':
 
-    cash_flow_q = ticker_info.quarterly_cashflow
-    col_names = [f'Q{q} {year}' for q, year in zip(cash_flow_q.columns.quarter, cash_flow_q.columns.year)]
-    cash_flow_q.columns = col_names
+        if period == 'annual':
+            df = ticker_info.financials
+            df.columns = df.columns.year
 
-    return cash_flow_yr, cash_flow_q
+        else:
+            df = ticker_info.quarterly_financials
+            col_names = [f'Q{q} {year}' for q, year in zip(df.columns.quarter, df.columns.year)]
+            df.columns = col_names
 
-# get financial data through yfinance
-def get_financial_data(ticker_info):
+    else: # cash flow data
+        if period == 'annual':
+            df = ticker_info.cash_flow
+            df.columns = df.columns.year
 
-    financial_yr = ticker_info.financials
-    financial_yr.columns = financial_yr.columns.year
+        else:
+            df = ticker_info.quarterly_cashflow
+            col_names = [f'Q{q} {year}' for q, year in zip(df.columns.quarter, df.columns.year)]
+            df.columns = col_names
 
-    financial_q = ticker_info.quarterly_financials
-    col_names = [f'Q{q} {year}' for q, year in zip(financial_q.columns.quarter, financial_q.columns.year)]
-    financial_q.columns = col_names
+    return df
 
-    return financial_yr, financial_q
+def subset_cash_flow_data(df):
+  #Extract variable used in analysis
+  prefixes = ['Cash Flow','Free Cash']
+  vars_cat = [var for var in df.index if var.startswith(tuple(prefixes))]
 
+  #subset a dataset
+  df = df.loc[vars_cat, :]
 
-### css for custom-button
-st.markdown('''    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
-        <style>
-            .custom-button a {
-                margin: 0;
-                padding: 0;
-                text-align: center;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                text-decoration: none;
-            }
+  # shorten the index name
+  df.rename(index=lambda x: x.replace('Cash Flow From Continuing ' ,'').replace('Activities',''), inplace=True)
 
-            .custom-button button {
-                background-color: transparent;
-                border: none;
-                cursor: pointer;
-                font-size: 16px;
-                display: inline-block;
-            }
+  return df
 
-            .custom-button button i {
-                font-size: 50px;
-                margin-right: 8px;
-            }
+def subset_financial_data(df):
+    # extract variables from financial data for later analysis
+    vars_cat = ['Total Revenue', 'Net Income Continuous Operations']
 
-            .custom-button button:hover {
-                color: orange;
-            }
-        </style>
+      #subset a dataset
+    df = df.loc[vars_cat, :]
 
-    ''', unsafe_allow_html=True)
+    # rename index
+    df.rename(index=lambda x: x.replace('Net Income Continuous Operations' ,'Earnings').replace('Total',''), inplace=True)
 
-st.markdown('''
-            <style>
-            .logo {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                width: 50%;
-            }
-            .top-page p{
+    return df
 
-                font-size: 20px;
-                font-weight:bold;
-                text-align: center;
-            }
-            .top-page span {
-                color: orange;
-            }
-            </style>
-            ''', unsafe_allow_html=True)
+# get the latest news through yfinance
+# @st.cache_data
+def get_financial_news(ticker_info):
+
+    return ticker_info.news
 
 
 def add_scroll_button(navigation_target: str):
@@ -122,83 +99,8 @@ def add_scroll_button(navigation_target: str):
                     <i class="fas fa-chevron-down"></i>
                 </button>
             </a>
+            <br>
         </div>
             ''', unsafe_allow_html=True)
 
 
-def test_button():
-    return st.markdown('''
-                       <style>
-                       .main{
-                           width: 80%;
-                           height: 100vh;
-                           display: flex;
-                           justify-content: space-around;
-                           align-items: center;
-                           margin: 0 auto;
-                        }
-                    .btn {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        min-width:220.52px;
-                        min-height: 56px;
-                        font-family: calibri;
-                        border: none;
-                        border-radius: 100px;
-                        cursor: pointer;
-                        font-weight: 400;
-                        text-decoration: none;
-                        transition: all 0.5s linear;
-                        }
-
-                        span {
-                            font-size: 30px;
-                            font-weight: 700;
-                            padding: 0 10px;
-                        }
-
-                        ion-icon {
-                            font-size: 2em;
-                            transition: all 0.5s linear;
-                        }
-
-                        .btn:hover ion-icon {
-                            transform: rotate(-90deg);
-
-                        }
-
-                        div {
-                            position: relative;
-                        }
-
-                        .yellow {
-                            /* background: #0ebac5; */
-                            background: none;
-                            color: black;
-                        }
-
-                        .yellow::before {
-                            content: "";
-                            display: block;
-                            width: 56px;
-                            height: 100%;
-                            background-color:#0ebac5;
-                            position: absolute;
-                            border-radius: 100px;
-                            left: 1em;
-                            z-index: -1;
-                            transition: all 600ms ease;
-                        }
-
-                        .yellow:hover::before {
-                            width: 100%;
-                        }
-
-                        .yellow:hover ion-icon {
-                            transform: translateX(10px);
-                        }
-                    </style>
-
-
-                       ''', unsafe_allow_html=True)
