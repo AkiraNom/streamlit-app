@@ -78,6 +78,7 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
                         ),
                 ),
             ],
+        height=700,
         xaxis = dict(tickfont = dict(size=16)),
         yaxis = dict(tickfont = dict(size=16)),
         )
@@ -113,115 +114,69 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
 
     return fig
 
-def plot_bar_chart(df_yr, df_q, vars_cat, document='Cash Flow'):
+def plot_bar_chart(df, title, y_axis_title, categoryorder='total descending'):
 
-    fig_yr = go.Figure()
-    fig_q = go.Figure()
+  fig = go.Figure()
+  vars_cat = df.index.tolist()
+  marker_colors = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80']
 
-    for var_cat in vars_cat:
-        if 'Cash Flow' in var_cat:
-            name = var_cat.replace('Cash Flow From Continuing ' ,'')
-            name = name.replace('Activities','')
-        elif 'Total' in var_cat:
-            name = var_cat.replace('Total ', '')
-        else:
-            name = var_cat.replace('Net Income Continuous Operations','Earnings')
+  for var_cat, color in zip(vars_cat, marker_colors):
+    fig.add_trace(go.Bar(name=var_cat,
+                         x=df.columns,
+                         y=df.loc[var_cat,:],
+                         marker_color=color))
 
-
-        fig_yr.add_trace(go.Bar(name = name,
-                                x=df_yr.columns,
-                                y=df_yr.loc[var_cat,:]))
-
-        fig_q.add_trace(go.Bar(name = name,
-                                x=df_q.columns,
-                                y=df_q.loc[var_cat,:]))
-
-    fig_yr.update_layout(title='Cash Flow',
-                         xaxis=dict(tickfont = dict(size=16),
-                                    tickangle=45,
-                                    categoryorder='total descending'),
-                         yaxis = dict(tickfont = dict(size=16),
-                                      showgrid=True,
-                                      gridwidth=1,
-                                      gridcolor='grey'),
-                         legend = dict(font = dict(size=16)),
-                         plot_bgcolor='rgba(0, 0, 0, 0)',
-                         paper_bgcolor='rgba(0, 0, 0, 0)',)
-
-    fig_q.update_layout(title='Cash Flow',
-                        xaxis=dict(title='Cash Flow',
+    fig.update_layout(title=f'<b>{title}</b>',
+                      xaxis=dict(tickfont = dict(size=16),
+                                 tickangle=45,
+                                 categoryorder=categoryorder),
+                      yaxis = dict(title = y_axis_title,
                                    tickfont = dict(size=16),
-                                   tickangle=45,
-                                   categoryorder='total ascending'),
-                        yaxis = dict(tickfont = dict(size=16),
-                                      showgrid=True,
-                                      gridwidth=1,
-                                      gridcolor='grey'),
-                         legend = dict(font = dict(size=16)),
-                        plot_bgcolor='rgba(0, 0, 0, 0)',
-                        paper_bgcolor='rgba(0, 0, 0, 0)',)
+                                   showgrid=True,
+                                   gridwidth=1,
+                                   gridcolor='grey'),
+                      font = dict(size=17),
+                      legend = dict(font = dict(size=16)),
+                      plot_bgcolor='rgba(0, 0, 0, 0)',
+                      paper_bgcolor='rgba(0, 0, 0, 0)',)
 
+  return fig
 
+def plot_scatter(df, title, categoryorder='total descending'):
 
-    return fig_yr, fig_q
-
-def plot_scatter(df_yr, df_q, vars_cat):
-
-    fig_yr = go.Figure()
-    fig_q = go.Figure()
+    fig = go.Figure()
 
     colors = ['rgba(204, 204, 204, 0.95)', 'rgba(98,98,226,0.5)']
-
+    vars_cat = df.index.tolist()
 
     for var_cat, color in zip(vars_cat, colors):
-        if 'Total' in var_cat:
-            name = var_cat.replace('Total ', '')
-        else:
-            name = var_cat.replace('Net Income Continuous Operations','Earnings')
 
-        fig_yr.add_trace(go.Scatter(name = name,
-                                x=df_yr.columns,
-                                y=df_yr.loc[var_cat,:],
-                                marker=dict(color=color, line_color=color),
-                                mode='markers'))
+      fig.add_trace(go.Scatter(
+          name = var_cat,
+                              x=df.columns,
+                              y=df.loc[var_cat,:],
+                              marker=dict(color=color, line_color=color),
+                              mode='markers'))
 
-        fig_q.add_trace(go.Scatter(name = name,
-                                x=df_q.columns,
-                                y=df_q.loc[var_cat,:],
-                                marker=dict(color=color, line_color=color),
-                                mode='markers'))
-
-        fig_yr.update_traces(mode='markers', marker=dict(line_width=1, symbol='circle', size=16))
-        fig_yr.update_layout(title='Revenue & Earnings',
-                             xaxis=dict(tickfont = dict(size=16),
-                                        tickangle=45,
-                                        showgrid=False,
-                                        zeroline=True,
-                                        categoryorder='total descending'),
-                            yaxis = dict(tickfont = dict(size=16),
-                                        showgrid=True,
-                                        gridwidth=1,
-                                        gridcolor='grey'),
-                            legend = dict(font = dict(size=16)),
-                            plot_bgcolor='rgba(0, 0, 0, 0)',
-                            paper_bgcolor='rgba(0, 0, 0, 0)',)
-
-        fig_q.update_traces(mode='markers', marker=dict(line_width=1, symbol='circle', size=16))
-        fig_q.update_layout(title='Revenue & Earnings',
+      fig.update_traces(mode='markers', marker=dict(line_width=1, symbol='circle', size=16))
+      fig.update_layout(title= f'<b>{title}<b>',
                             xaxis=dict(tickfont = dict(size=16),
-                                       tickangle=45,
-                                       showgrid=False,
-                                       zeroline=True,
-                                       categoryorder='total ascending'),
-                            yaxis = dict(tickfont = dict(size=16),
-                                        showgrid=True,
-                                        gridwidth=1,
-                                        gridcolor='grey'),
-                            legend = dict(font = dict(size=16)),
-                            plot_bgcolor='rgba(0, 0, 0, 0)',
-                            paper_bgcolor='rgba(0, 0, 0, 0)',)
+                                      tickangle=45,
+                                      showgrid=False,
+                                      zeroline=True,
+                                      categoryorder=categoryorder),
+                          yaxis = dict(tickfont = dict(size=16),
+                                      showgrid=True,
+                                      gridwidth=1,
+                                      gridcolor='grey'),
+                          yaxis_tickprefix = '$',
+                          font = dict(size=17),
+                          legend = dict(font = dict(size=16)),
+                          plot_bgcolor='rgba(0, 0, 0, 0)',
+                          paper_bgcolor='rgba(0, 0, 0, 0)',)
 
-    return fig_yr, fig_q
+    return fig
+
 
 def plot_sankey_diagram(df, link, report_name):
 
@@ -247,7 +202,7 @@ def plot_sankey_diagram(df, link, report_name):
     font_color="Black",
     font_size=11,)
 
-    note = f'Source:<a href="https://www.sec.gov/"">The SEC</a> Data: <a href=link>{report_name}</a>'
+    note = f'Source:<a href="https://www.sec.gov/"">The SEC</a>  Data: <a href=link>{report_name}</a>'
     fig.add_annotation(
         showarrow=False,
         text=note,
