@@ -84,13 +84,6 @@ def subset_financial_data(df):
 
     return df
 
-# get the latest news through yfinance
-# @st.cache_data
-def get_financial_news(ticker_info):
-
-    return ticker_info.news
-
-
 def add_scroll_button(navigation_target: str):
     return st.markdown(f'''
                     <div class="custom-button">
