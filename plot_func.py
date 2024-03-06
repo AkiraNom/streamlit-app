@@ -2,6 +2,7 @@
 import pandas as pd
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
+import plotly.express as px
 
 def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
 
@@ -96,8 +97,6 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
             y=1.16,
             )
 
-
-
     # footer
     source_note = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a> Time : {current_time} (UTC)</b>'
 
@@ -114,22 +113,16 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
 
     return fig
 
-def plot_bar_chart(df, title, y_axis_title, categoryorder='total descending'):
+def plot_bar_chart(df, title, y_axis_title, categoryorder='total descending',barmode='group'):
 
-  fig = go.Figure()
-  vars_cat = df.index.tolist()
-  marker_colors = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80']
+    color_discrete_sequence = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80']
 
-  for var_cat, color in zip(vars_cat, marker_colors):
-    fig.add_trace(go.Bar(name=var_cat,
-                         x=df.columns,
-                         y=df.loc[var_cat,:],
-                         marker_color=color))
+    fig = px.bar(df, color_discrete_sequence=color_discrete_sequence)
 
-    fig.update_layout(title=f'<b>{title}</b>',
-                      xaxis=dict(tickfont = dict(size=16),
-                                 tickangle=45,
-                                 categoryorder=categoryorder),
+    fig.update_layout(title = f'<b>{title}</b>',
+                      xaxis = dict(tickfont = dict(size=16),
+                                  tickangle=45,
+                                  categoryorder=categoryorder),
                       yaxis = dict(title = y_axis_title,
                                    tickfont = dict(size=16),
                                    showgrid=True,
@@ -138,42 +131,36 @@ def plot_bar_chart(df, title, y_axis_title, categoryorder='total descending'):
                       font = dict(size=17),
                       legend = dict(font = dict(size=16)),
                       plot_bgcolor='rgba(0, 0, 0, 0)',
-                      paper_bgcolor='rgba(0, 0, 0, 0)',)
+                      paper_bgcolor='rgba(0, 0, 0, 0)',
+                      barmode=barmode)
 
-  return fig
+    return fig
 
-def plot_scatter(df, title, categoryorder='total descending'):
-
-    fig = go.Figure()
+def plot_scatter(df, title):
 
     colors = ['rgba(204, 204, 204, 0.95)', 'rgba(98,98,226,0.5)']
-    vars_cat = df.index.tolist()
 
-    for var_cat, color in zip(vars_cat, colors):
+    fig =px.scatter(df,
+                    color_discrete_sequence=colors
+                    )
 
-      fig.add_trace(go.Scatter(
-          name = var_cat,
-                              x=df.columns,
-                              y=df.loc[var_cat,:],
-                              marker=dict(color=color, line_color=color),
-                              mode='markers'))
-
-      fig.update_traces(mode='markers', marker=dict(line_width=1, symbol='circle', size=16))
-      fig.update_layout(title= f'<b>{title}<b>',
-                            xaxis=dict(tickfont = dict(size=16),
-                                      tickangle=45,
-                                      showgrid=False,
-                                      zeroline=True,
-                                      categoryorder=categoryorder),
-                          yaxis = dict(tickfont = dict(size=16),
-                                      showgrid=True,
-                                      gridwidth=1,
-                                      gridcolor='grey'),
-                          yaxis_tickprefix = '$',
-                          font = dict(size=17),
-                          legend = dict(font = dict(size=16)),
-                          plot_bgcolor='rgba(0, 0, 0, 0)',
-                          paper_bgcolor='rgba(0, 0, 0, 0)',)
+    fig.update_traces(mode='markers', marker=dict(line_width=1, symbol='circle', size=16))
+    fig.update_layout(xaxis_type='category')
+    fig.update_layout(title= f'<b>{title}<b>',
+                    xaxis=dict(tickfont = dict(size=16),
+                                tickangle=45,
+                                showgrid=False,
+                                zeroline=True,
+                                ),
+                    yaxis = dict(tickfont = dict(size=16),
+                                    showgrid=True,
+                                    gridwidth=1,
+                                    gridcolor='grey'),
+                    yaxis_tickprefix = '$',
+                    font = dict(size=17),
+                    legend = dict(font = dict(size=16)),
+                    plot_bgcolor='rgba(0, 0, 0, 0)',
+                    paper_bgcolor='rgba(0, 0, 0, 0)',)
 
     return fig
 

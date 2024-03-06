@@ -110,6 +110,9 @@ def subset_financial_data(df):
     # rename index
     df.rename(columns=lambda x: x.replace('Net Income Continuous Operations' ,'Earnings').replace('Total',''), inplace=True)
 
+    # set data type as int
+    df = df.astype('Int64')
+
     return df
 
 # get sales data
