@@ -63,7 +63,7 @@ tab1, tab2 = st.tabs(['Default', 'Colorblind friendly'])
 
 st.empty()
 with tab1:
-    st.empty()
+
     st.plotly_chart(plot_func.plot_candle_chart(stock_price_1yr,
                                                 stock_price_max,
                                                 current_time,
@@ -71,7 +71,7 @@ with tab1:
                     use_container_width=True)
 
 with tab2:
-    st.empty()
+
     st.plotly_chart(plot_func.plot_candle_chart(stock_price_1yr,
                                                 stock_price_max,
                                                 current_time,
@@ -85,35 +85,35 @@ utils.add_scroll_button('#header-2')
 # Header 2
 st.header('Financials', anchor='header-2', divider='blue')
 
-df_cash_flow_yr = utils.get_financial_data(TICKER_INFO, document_type='cash flow', period='annual')
-df_cash_flow_q = utils.get_financial_data(TICKER_INFO, document_type='cash flow', period='quarterly')
-df_financial_yr = utils.get_financial_data(TICKER_INFO, document_type='financial', period='annual')
-df_financial_q = utils.get_financial_data(TICKER_INFO, document_type='financial', period='quarterly')
-
-#Extract variable for cash flow bar plot
-df_cash_flow_yr_subset = utils.subset_cash_flow_data(df_cash_flow_yr)
-df_cash_flow_q_subset = utils.subset_cash_flow_data(df_cash_flow_q)
+df_cash_flow_yr = (utils.get_financial_data(TICKER_INFO, document_type='cash flow', period='annual')
+                   .pipe(utils.subset_cash_flow_data)
+                   )
+df_cash_flow_q = (utils.get_financial_data(TICKER_INFO, document_type='cash flow', period='quarterly')
+                  .pipe(utils.subset_cash_flow_data)
+                  )
+df_financial_yr = (utils.get_financial_data(TICKER_INFO, document_type='financial', period='annual')
+                   .pipe(utils.subset_financial_data)
+                   )
+df_financial_q = (utils.get_financial_data(TICKER_INFO, document_type='financial', period='quarterly')
+                  .pipe(utils.subset_financial_data)
+                  )
 
 # plot cash flow graph
-fig_cash_flow_yr = plot_func.plot_bar_chart(df=df_cash_flow_yr_subset,
+fig_cash_flow_yr = plot_func.plot_bar_chart(df=df_cash_flow_yr,
                                             title='Cash Flow',
                                             y_axis_title='Balance ($)')
 
-fig_cash_flow_q = plot_func.plot_bar_chart(df=df_cash_flow_q_subset,
+fig_cash_flow_q = plot_func.plot_bar_chart(df=df_cash_flow_q,
                                            title='Cash Flow',
                                            y_axis_title='Balance ($)',
                                            categoryorder='category ascending'
                                            )
 
-# variables for earnigns and Revenue
-df_financial_yr_subset = utils.subset_financial_data(df_financial_yr)
-df_financial_q_subset = utils.subset_financial_data(df_financial_q)
-
 #plot earnings and revenue graph
-fig_financial_yr = plot_func.plot_scatter(df_financial_yr_subset,
+fig_financial_yr = plot_func.plot_scatter(df_financial_yr,
                                           title = 'Revenue & Earnings')
 
-fig_financial_q = plot_func.plot_scatter(df_financial_q_subset,
+fig_financial_q = plot_func.plot_scatter(df_financial_q,
                                          title = 'Revenue & Earnings')
 
 tab1, tab2 = st.tabs(["Annual", "Quarterly"])
@@ -261,18 +261,18 @@ with col1:
     st.plotly_chart(fig_share, theme=None, use_container_width=True)
 
 with col2:
-            st.markdown(f'''<div class="share-description">
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <h3> <span>Tesla</span> leading the EV market</h3>
-                        <p> In the fourth quater of 2023, Tesla accounts for about 56% of all battery EV sales in US,
-                        showing the strong share in the market.
-                    </p>
-                    <br>
-                    </div>
-                    ''', unsafe_allow_html=True)
+    st.markdown(f'''<div class="share-description">
+            <br>
+            <br>
+            <br>
+            <br>
+            <h3> <span>Tesla</span> leading the EV market</h3>
+                <p> In the fourth quater of 2023, Tesla accounts for about 56% of all battery EV sales in US,
+                showing the strong share in the market.
+            </p>
+            <br>
+            </div>
+            ''', unsafe_allow_html=True)
 
 utils.add_scroll_button('#header-6')
 
@@ -303,7 +303,18 @@ with col1:
 
 with col2:
 
-    st.markdown('add description here')
+    st.markdown(f'''<div class="station-description">
+        <br>
+        <br>
+        <br>
+        <br>
+        <h3> <span>Tesla</span> Expandng the Supercharger Station</h3>
+            <p> Tesla is investing to expand electric vehicle charging
+            infrastructure in the US
+        </p>
+        <br>
+        </div>
+        ''', unsafe_allow_html=True)
 
 # utils.add_scroll_button('#header-')
 
@@ -312,7 +323,7 @@ with col2:
 # st.header('', anchor='header-', divider='blue')
 
 # utils.add_scroll_button('#header-')
-# utils.add_top_button('#top-header')
+utils.add_top_button('#top-header')
 
 ###########################
 # Layout-sidebar: displays the headers
