@@ -2,6 +2,7 @@ import base64
 import datetime
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
 def read_image(path):
     """image from local file"""
@@ -64,10 +65,8 @@ def get_financial_data(ticker_info, document_type:str, period='annual'):
 def pre_processing_annual_data(df):
 
     df.columns.name = 'Period'
+    df.columns = pd.DatetimeIndex(df.columns).year.astype(str)
     df = df.transpose()
-    df = df.reset_index()
-    df['Period']=df['Period'].dt.year.astype(str)
-    df=df.set_index('Period')
     df = df.iloc[::-1]
 
     return df
@@ -118,7 +117,245 @@ def subset_financial_data(df):
 # get sales data
 def get_sales_data(file_path):
 
-    return pd.read_csv(file_path)
+    df = pd.read_csv(file_path)
+    df = df.set_index('Date')
+
+    return df
+
+def image_slideshow():
+    return components.html(
+    """
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {box-sizing: border-box;}
+body {font-family: Verdana, sans-serif;}
+.mySlides {display: none;}
+img {vertical-align: middle;}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .text {font-size: 11px}
+}
+</style>
+</head>
+<body>
+
+<div class="slideshow-container">
+
+<div class="mySlides fade">
+  <img src="https://www.tesla.com/ownersmanual/images/GUID-1F2D8746-336F-4CF9-9A04-F35E960F31FE-online-en-US.png" style="width:100%; height:100%", >
+</div>
+
+<div class="mySlides fade">
+  <img src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-Y-Range-Desktop-LHD.jpg" style="width:100%; height:100%">
+</div>
+
+<div class="mySlides fade">
+  <img src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-Y-Cabin-Desktop-LHD.jpg" style="width:100%; height:100%">
+</div>
+
+</div>
+<br>
+
+<div style="text-align:center">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
+<script>
+let slideIndex = 0;
+showSlides();
+
+function showSlides() {
+  let i;
+  let slides = document.getElementsByClassName("mySlides");
+  let dots = document.getElementsByClassName("dot");
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) {slideIndex = 1}
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";
+  dots[slideIndex-1].className += " active";
+  setTimeout(showSlides, 2000); // Change image every 2 seconds
+}
+</script>
+
+</body>
+</html>
+
+    """,
+    height=500,
+)
+
+def subset_EV_company(df, top=5):
+    # select top n companies
+    sales_rank = df.iloc[-1,:].rank(ascending=False).astype(int) <= top
+    df = df.loc[:, sales_rank]
+
+    return df
+
+def pre_processing_station_data(df):
+
+    # expand dictionary data in column values
+    df_address = df['address'].apply(pd.Series)
+    df_gps = df['gps'].apply(pd.Series)
+
+    # merge all data frames
+    df = pd.concat([df, df_address, df_gps],axis=1)
+
+    return df
+
+def subset_station_data(df, country='USA', status='OPEN', otherEVs=False):
+
+    # remove unnessary data
+    cols_drop = ['locationId','name','address','gps','elevationMeters',
+                'powerKilowatt','solarCanopy', 'battery',
+                'statusDays', 'urlDiscuss','hours','street','city'
+                ]
+    df = df.drop(cols_drop, axis=1)
+
+    # subset, within USA, open station, and tesla charger only
+    df = df[df['country']== country]
+    df = df[(df['status']== status)]
+    df = df[df['otherEVs']== otherEVs]
+
+    # add year info
+    df.loc[:,'Year'] = pd.to_datetime(df['dateOpened']).dt.year.astype(int)
+
+    return df
+
+def count_station_per_state(df):
+    # calculate cumulative sum
+    df = df.groupby(['state','Year'])['id'].count().sort_values(ascending=True).reset_index()
+    df = df.rename(columns={'id':'count'})
+
+    return df
+
+def deal_missing_year(df):
+    # fill missing year in the dataset
+    first_year = df['Year'].min()
+    last_year = df['Year'].max()
+
+    years = list(range(first_year, last_year+1))
+    states = df['state'].unique().tolist()
+
+    # create a new multiindex covering all possible state * yeaer combinations
+    new_index = pd.MultiIndex.from_product([states, years], names=['state', 'Year'])
+
+    df = df.set_index(['state', 'Year'])
+    df = df.reindex(new_index, fill_value=0)
+    df = df.reset_index()
+
+    # change year type to str otherwise animation displayes float-like value
+    df['Year'] = df['Year'].astype(str)
+
+    return df
+
+def calc_cumulative_sum(df):
+
+    df['cum_sum'] = df.groupby(['state'])['count'].cumsum()
+
+    return df
+
+def set_sataion_cat(row):
+  if row['cum_sum'] == 0:
+      return '0'
+  if row['cum_sum'] > 0 and row['cum_sum'] <= 20:
+      return '1 - 20'
+  if row['cum_sum'] > 20 and row['cum_sum'] <= 40:
+      return '21 - 40'
+  if row['cum_sum'] > 40 and row['cum_sum'] <= 60:
+      return '41 - 60'
+  if row['cum_sum'] > 60 and row['cum_sum'] <= 80:
+      return '61 - 80'
+  if row['cum_sum'] > 80 and row['cum_sum'] <= 100:
+      return '81 - 100'
+  if row['cum_sum'] > 100 and row['cum_sum'] <= 150:
+      return '101 - 150'
+  if row['cum_sum'] > 150:
+      return '151 and higher'
+
+def add_category_to_timeframe(df):
+  # Adds all available categories to each time frame
+  # https://plotly.com/python/animations/#current-animation-limitations-and-caveats
+  catg = df['category'].unique()
+  dts = df['Year'].unique()
+
+  columns = ['Year','cum_sum','category']
+
+  for tf in dts:
+      for i in catg:
+          df_append = pd.DataFrame({
+              'Year' : [tf],
+              'cum_sum' : 'N',
+              'category' : [i]
+              }, columns = columns)
+          df = pd.concat([df, df_append], ignore_index=True, axis=0)
+
+  return df
+
 
 def add_scroll_button(navigation_target: str):
     return st.markdown(f'''
@@ -132,6 +369,7 @@ def add_scroll_button(navigation_target: str):
         </div>
             ''', unsafe_allow_html=True)
 
+
 # navigate to the top
 def add_top_button(navigation_target: str):
     return st.markdown(f'''
@@ -144,3 +382,6 @@ def add_top_button(navigation_target: str):
             <br>
         </div>
             ''', unsafe_allow_html=True)
+
+
+

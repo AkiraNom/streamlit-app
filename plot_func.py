@@ -113,54 +113,53 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
 
     return fig
 
-def plot_bar_chart(df, title, y_axis_title, categoryorder='total descending',barmode='group'):
-
-    color_discrete_sequence = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80']
+def plot_bar_chart(df, title, y_axis_title, color_discrete_sequence = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80'], categoryorder='total descending',barmode='group'):
 
     fig = px.bar(df, color_discrete_sequence=color_discrete_sequence)
 
     fig.update_layout(title = f'<b>{title}</b>',
-                      xaxis = dict(tickfont = dict(size=16),
-                                  tickangle=45,
-                                  categoryorder=categoryorder),
+                      xaxis = dict(title='',
+                                   tickfont = dict(size=16),
+                                   tickangle=45,
+                                   categoryorder=categoryorder),
                       yaxis = dict(title = y_axis_title,
                                    tickfont = dict(size=16),
                                    showgrid=True,
                                    gridwidth=1,
                                    gridcolor='grey'),
                       font = dict(size=17),
-                      legend = dict(font = dict(size=16)),
+                      legend = dict(title_text = '',
+                                    font = dict(size=16)),
                       plot_bgcolor='rgba(0, 0, 0, 0)',
                       paper_bgcolor='rgba(0, 0, 0, 0)',
                       barmode=barmode)
 
     return fig
 
-def plot_scatter(df, title):
+def plot_scatter(df, title, color_discrete_sequence = ['rgba(204, 204, 204, 0.95)', 'rgba(98,98,226,0.5)']):
 
-    colors = ['rgba(204, 204, 204, 0.95)', 'rgba(98,98,226,0.5)']
-
-    fig =px.scatter(df,
-                    color_discrete_sequence=colors
-                    )
+    fig =px.scatter(df, color_discrete_sequence=color_discrete_sequence)
 
     fig.update_traces(mode='markers', marker=dict(line_width=1, symbol='circle', size=16))
     fig.update_layout(xaxis_type='category')
     fig.update_layout(title= f'<b>{title}<b>',
-                    xaxis=dict(tickfont = dict(size=16),
-                                tickangle=45,
-                                showgrid=False,
-                                zeroline=True,
+                      xaxis=dict(title='',
+                                 tickfont = dict(size=16),
+                                 tickangle=45,
+                                 showgrid=False,
+                                 zeroline=True
                                 ),
-                    yaxis = dict(tickfont = dict(size=16),
-                                    showgrid=True,
-                                    gridwidth=1,
-                                    gridcolor='grey'),
-                    yaxis_tickprefix = '$',
-                    font = dict(size=17),
-                    legend = dict(font = dict(size=16)),
-                    plot_bgcolor='rgba(0, 0, 0, 0)',
-                    paper_bgcolor='rgba(0, 0, 0, 0)',)
+                      yaxis = dict(title='',
+                                   tickfont = dict(size=16),
+                                   showgrid=True,
+                                   gridwidth=1,
+                                   gridcolor='grey'),
+                      yaxis_tickprefix = '$',
+                      font = dict(size=17),
+                      legend = dict(title_text ='',
+                                  font = dict(size=16)),
+                      plot_bgcolor='rgba(0, 0, 0, 0)',
+                      paper_bgcolor='rgba(0, 0, 0, 0)',)
 
     return fig
 
@@ -202,4 +201,62 @@ def plot_sankey_diagram(df, link, report_name):
 
     return fig
 
+def plot_choropleth(df):
 
+    fig = px.choropleth(df,
+                        locations='state',
+                        locationmode='USA-states',
+                        color="category",
+                        color_discrete_map={
+                            '0': '#fffcfc',
+                            '1 - 20' : '#fff0f0',
+                            '21 - 40' : '#ffdbdb',
+                            '41 - 60' : '#ffbaba',
+                            '61 - 80' : '#ff9e9e',
+                            '81 - 100' : '#ff7373',
+                            '101 - 150' : '#ff4d4d',
+                            '151 and higher' : '#ff0d0d'
+                            },
+                        category_orders={
+                        'category' : [
+                            '0',
+                            '1 - 20',
+                            '21 - 40',
+                            '41 - 60',
+                            '61 - 80',
+                            '81 - 100',
+                            '101 - 150',
+                            '151 and higher'
+                        ]
+                        },
+                        animation_frame='Year',
+                        scope='usa',
+                        basemap_visible=True,
+                        title='<b>Supercharger Stations in United States</b>',
+                        labels={'cum_sum' : 'Number of stations',
+                                'category' : 'Category'},
+                        hover_name='state',
+                        hover_data={
+                            'cum_sum' : True,
+                            'count' : False,
+                            'Year': False
+                        },
+                        height=500,
+                        width=900,
+                        )
+
+    # Adjust map layout stylings
+    fig.update_layout(
+        showlegend=True,
+        legend_title_text='<b>Total Number of Stations</b>',
+        font=dict(size= 14, color= '#808080'),
+        margin={"r":0,"t":40,"l":0,"b":0},
+        legend=dict(orientation='v'),
+        geo_bgcolor = 'rgba(0,0,0,0)'
+    )
+
+    # Adjust map geo options
+    fig.update_geos(showlakes=True, lakecolor="lightskyblue",
+                    subunitcolor='white')
+
+    return fig
