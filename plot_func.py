@@ -249,7 +249,7 @@ def plot_choropleth(df):
     fig.update_layout(
         showlegend=True,
         legend_title_text='<b>Total Number of Stations</b>',
-        font=dict(size= 14, color= '#808080'),
+        font=dict(size= 14, color= '#fff0f0'),
         margin={"r":0,"t":40,"l":0,"b":0},
         legend=dict(orientation='v'),
         geo_bgcolor = 'rgba(0,0,0,0)'
