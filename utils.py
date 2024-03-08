@@ -115,6 +115,7 @@ def subset_financial_data(df):
     return df
 
 # get sales data
+@st.cache_data(ttl=72000)
 def get_sales_data(file_path):
 
     df = pd.read_csv(file_path)
@@ -122,6 +123,7 @@ def get_sales_data(file_path):
 
     return df
 
+# image gallery for tesla model Y
 def image_slideshow():
     return components.html(
     """
@@ -255,6 +257,10 @@ def subset_EV_company(df, top=5):
     df = df.loc[:, sales_rank]
 
     return df
+
+@st.cache_data(ttl=72000)
+def load_station_data(path_station):
+  return pd.read_json(path_station)
 
 def pre_processing_station_data(df):
 

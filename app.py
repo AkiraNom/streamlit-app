@@ -59,9 +59,7 @@ st.header('Stock price', anchor='header-1', divider='blue')
 
 # stock_price_1yr, stock_price_max, current_time = utils.get_stock_price(TICKER_INFO, period1='1y', period2='max')
 
-# tab1, tab2 = st.tabs(['Default', 'Colorblind friendly'])
-
-# st.empty()
+# tab1, tab2 = st.tabs(['Default', 'Colorblind friendly']
 # with tab1:
 
 #     st.plotly_chart(plot_func.plot_candle_chart(stock_price_1yr,
@@ -79,7 +77,7 @@ st.header('Stock price', anchor='header-1', divider='blue')
 #                     use_container_width=True)
 
 
-utils.add_scroll_button('#header-2')
+# utils.add_scroll_button('#header-2')
 
 #########################################
 # Header 2
@@ -101,35 +99,37 @@ st.header('Financials', anchor='header-2', divider='blue')
 # # plot cash flow graph
 # fig_cash_flow_yr = plot_func.plot_bar_chart(df=df_cash_flow_yr,
 #                                             title='Cash Flow',
-#                                             y_axis_title='Balance ($)')
+#                                             y_axis_title='Balance ($)',
+#                                             data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a></b>')
 
 # fig_cash_flow_q = plot_func.plot_bar_chart(df=df_cash_flow_q,
 #                                            title='Cash Flow',
 #                                            y_axis_title='Balance ($)',
-#                                            categoryorder='category ascending'
+#                                            categoryorder='category ascending',
+#                                            data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a></b>'
 #                                            )
 
 # #plot earnings and revenue graph
 # fig_financial_yr = plot_func.plot_scatter(df_financial_yr,
-#                                           title = 'Revenue & Earnings')
+#                                           title = 'Revenue & Earnings',
+#                                           data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a></b>')
 
 # fig_financial_q = plot_func.plot_scatter(df_financial_q,
-#                                          title = 'Revenue & Earnings')
+#                                          title = 'Revenue & Earnings',
+#                                          data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a></b>')
 
 # tab1, tab2 = st.tabs(["Annual", "Quarterly"])
 
-# st.empty()
+
 # with tab1:
 #     col1, col2 = st.columns(2)
 
 #     with col1:
 #         #### Cash Flow, annual
-#         st.empty()
 #         st.plotly_chart(fig_cash_flow_yr, theme=None, use_container_width=True)
 
 #     with col2:
 #         #### Revenue & Earnings, annual
-#         st.empty()
 #         st.plotly_chart(fig_financial_yr, theme=None, use_container_width=True)
 
 # with tab2:
@@ -138,12 +138,10 @@ st.header('Financials', anchor='header-2', divider='blue')
 
 #     with col1:
 #         #### Cash Flow, quartely
-#         st.empty()
 #         st.plotly_chart(fig_cash_flow_q, theme=None, use_container_width=True)
 
 #     with col2:
 #         #### Revenue & Earnings, quartely
-#         st.empty()
 #         st.plotly_chart(fig_financial_q, theme=None, use_container_width=True)
 
 # ## css for font size in the tab
@@ -164,9 +162,25 @@ utils.add_scroll_button('#header-3')
 st.header('Visualize Income Statement', anchor='header-3', divider='blue')
 
 df, link, report_name = sankey_data.tesla_sankey_data()
-st.empty()
-st.plotly_chart(plot_func.plot_sankey_diagram(df,link, report_name),use_container_width=True)
 
+col1, col2 = st.columns((2,1))
+with col1:
+
+    st.plotly_chart(plot_func.plot_sankey_diagram(df,link, report_name),use_container_width=True)
+
+with col2:
+    st.markdown(f'''<div>
+            <br>
+            <br>
+            <br>
+            <h3 style='color:orange;'>Sankey Diagram</h3>
+                <p class="sankey-description">
+                    Sankey diagram presents an overview of the main money flows through business and
+                    how the money is earned and used in each sector.
+                </p>
+            <br>
+            </div>
+            ''', unsafe_allow_html=True)
 utils.add_scroll_button('#header-4')
 
 #############################
@@ -181,6 +195,7 @@ fig_model = plot_func.plot_bar_chart(df=df_model,
                                      y_axis_title='Vehicle delivery',
                                      categoryorder='total ascending',
                                      barmode='relative',
+                                     data_source='<b>Source: <a href="https://www.visualcapitalist.com/charted-teslas-global-sales-by-model-and-year-2016-2023/">Visual Capitalist</a></b>'
                                      )
 
 path_country_data = './data/EV_sales_by_country.csv'
@@ -192,20 +207,18 @@ fig_country = plot_func.plot_bar_chart(df=df_country,
                                      color_discrete_sequence = ['#1C4E80','#0091D5','#7E909A'],
                                      categoryorder='total ascending',
                                      barmode='relative',
+                                     data_source='<b>Source: <a href="https://ir.tesla.com/sec-filings">Tesla SEC filings</a></b>'
                                      )
 tab1, tab2 = st.tabs(['Model','Country'])
-
-st.empty()
 with tab1:
     col1, col2 = st.columns((2,1))
 
     with col1:
-        st.empty()
         st.plotly_chart(fig_model, theme=None, use_container_width=True)
     with col2:
 
         st.markdown('''<div class='model_title'>
-                    <h3>Tesla Model Y</h3>
+                    <h4>Tesla Model Y</h4>
                     ''', unsafe_allow_html=True)
         utils.image_slideshow()
 
@@ -215,7 +228,6 @@ with tab2:
     col1, col2 = st.columns((2,1))
 
     with col1:
-        st.empty()
         st.plotly_chart(fig_country, theme=None, use_container_width=True)
     with col2:
 
@@ -252,13 +264,11 @@ fig_share= plot_func.plot_bar_chart(df=df_share_subset,
                                      color_discrete_sequence = ['#1C4E80', '#0091D5', '#A5D8DD', '#7E909A', '#BEC7CC'],
                                      categoryorder='total ascending',
                                      barmode='relative',
+                                     data_source='<b>Source: <a href="https://www.coxautoinc.com/market-insights/q4-2023-ev-sales/">Cox Automotive</a></b>'
                                      )
 
 col1, col2 = st.columns((2,1))
-
-st.empty()
 with col1:
-    st.empty()
     st.plotly_chart(fig_share, theme=None, use_container_width=True)
 
 with col2:
@@ -284,7 +294,7 @@ utils.add_scroll_button('#header-6')
 st.header('Investment on Charging Station across US', anchor='header-6', divider='blue')
 
 path_station = './data/charge_station.json'
-df_station = (pd.read_json(path_station)
+df_station = (utils.load_station_data(path_station)
               .pipe(utils.pre_processing_station_data)
               .pipe(utils.subset_station_data)
               .pipe(utils.count_station_per_state)
@@ -295,7 +305,8 @@ df_station = (df_station.assign(category=df_station.apply(utils.set_sataion_cat,
               .pipe(utils.add_category_to_timeframe)
               )
 
-fig_station = plot_func.plot_choropleth(df_station)
+fig_station = plot_func.plot_choropleth(df_station,
+                                        data_source='<b>Source: <a href="https://supercharge.info/data">Supercharge.info</a></b>')
 
 col1, col2 = st.columns((2,1))
 
@@ -319,44 +330,89 @@ with col2:
         </div>
         ''', unsafe_allow_html=True)
 
-# utils.add_scroll_button('#header-')
-
-#############################
-# Header
-# st.header('', anchor='header-', divider='blue')
-
-# utils.add_scroll_button('#header-')
 utils.add_top_button('#top-header')
+st.markdown('''<div class="top-button"><a href="#top-header">Back to Top</a> </div>''',
+            unsafe_allow_html=True)
 
 ###########################
 # Layout-sidebar: displays the headers
 
-## FIX the sidebar
-# 1. Title : table of contents, center alighnment
-# 2. list the header link, left alighnment
-# 3.link or add an icon of streamlit, twitter, instagram etc
+
+with st.sidebar:
+
+    st.markdown('''
+                <div class="section-list">
+                <h2>Table of Contents</h2>
+                <a href="#top-header"><span>&#127970;</span>Company description</a> <br>
+                <a href="#header-1"><span>&#x1f4c8;</span> Strock Price</a><br>
+                <a href="#header-2"><span>&#x1f4b5;</span>Financial Statement</a><br>
+                <a href="#header-3"><span>&#x1f4b5;</span>Visuzalise Income Statement</a><br>
+                <a href="#header-4"><span>&#128664;</span>Tesla EV Sales</a><br>
+                <a href="#header-5"><span>&#127970;</span>Other EV companies</a><br>
+                <a href="#header-6"><span>&#9981;</span>Charging Station Map in US</a><br>
+                <a href="#top-header"><span>&#10067; </span>FAQ</a> <br>
+                <a href="#top-header"><span>&#x2709; </span>Contact</a> <br>
+                <a href="#top-header"><span>&#128394; </span>About</a> <br>
+
+                </div>
+    ''', unsafe_allow_html=True)
 
 
+    st.markdown("---")
+    st.markdown('''
+                <h2>Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="20"></a>
+                </h2>
+        ''',
+        unsafe_allow_html=True
+    )
+st.markdown('''    <style>
+        .container {
+            height: 10vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-# st.sidebar.markdown('''<div class="sidebar">
-# # Sections
-# <p>
-# [Company Description](#Top) <br>
-# :sparkles:[Stock Price](#header-1)<br>
-# [Financial Statement](#header-2) <br>
-# [Visualize Income Statement](#header-3) <br>
-# </p>
-# </div>
-# ''', unsafe_allow_html=True)
+        .container p {
+            color: orange;
+            margin: 3px
+        }
 
-# st.markdown("""
-# <style>
-#     [data-testid=stSidebar] {
-#         text-align: left
-#     }
-# </style>
-# """, unsafe_allow_html=True)
 
-# st.sidebar.header('Table of Contents')
-# st.sidebar.markdown('''
-#     [Company Description](#Top)''', unsafe_allow_html=True)
+        .container a i::before {
+            text-decoration: none;
+            font-size: 24px;
+            color: #ffffff;
+            transition: all 0.3s linear;
+            margin-left: 10px;
+            margin-right 10px;
+        }
+
+        .container a:hover i {
+            transform: scale(1.5);
+        }
+
+        .youtube:hover i::before {
+            color: red;
+        }
+        .instagram:hover i::before {
+            color: #e11d74;
+        }
+        .linkedin:hover i::before {
+            color: #04009a;
+        }
+    </style>''', unsafe_allow_html=True
+    )
+with st.sidebar:
+    st.markdown('''<div class="container">
+            <p>Follow : </p>
+            <a class="link linkedin" href="https://www.linkedin.com/company/">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a class="link instagram" href="https://www.instagram.com/">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a class="link youtube" href="https://www.youtube.com/">
+                <i class="fab fa-youtube"></i>
+            </a>
+        </div>''', unsafe_allow_html=True)

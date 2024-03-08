@@ -98,11 +98,11 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
             )
 
     # footer
-    source_note = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a> Time : {current_time} (UTC)</b>'
+    data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a> Time : {current_time} (UTC)</b>'
 
     fig.add_annotation(
             showarrow=False,
-            text=source_note,
+            text=data_source,
             font=dict(color='white',size=15),
             xref='x domain',
             x=0.0,
@@ -113,7 +113,7 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
 
     return fig
 
-def plot_bar_chart(df, title, y_axis_title, color_discrete_sequence = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80'], categoryorder='total descending',barmode='group'):
+def plot_bar_chart(df, title, y_axis_title, color_discrete_sequence = ['#7E909A', '#A5D8DD', '#0091D5','#1C4E80'], categoryorder='total descending',barmode='group', data_source=False):
 
     fig = px.bar(df, color_discrete_sequence=color_discrete_sequence)
 
@@ -132,11 +132,24 @@ def plot_bar_chart(df, title, y_axis_title, color_discrete_sequence = ['#7E909A'
                                     font = dict(size=16)),
                       plot_bgcolor='rgba(0, 0, 0, 0)',
                       paper_bgcolor='rgba(0, 0, 0, 0)',
-                      barmode=barmode)
+                      barmode=barmode,
+                      margin=dict(b=100))
+
+    if data_source !=False:
+        fig.add_annotation(
+            showarrow=False,
+            text=data_source,
+            font=dict(color='white',size=15),
+            xref='x domain',
+            x=0.0,
+            yref='y domain',
+            y=-0.3
+            )
+
 
     return fig
 
-def plot_scatter(df, title, color_discrete_sequence = ['rgba(204, 204, 204, 0.95)', 'rgba(98,98,226,0.5)']):
+def plot_scatter(df, title, color_discrete_sequence = ['rgba(204, 204, 204, 0.95)', 'rgba(98,98,226,0.5)'], data_source=False):
 
     fig =px.scatter(df, color_discrete_sequence=color_discrete_sequence)
 
@@ -159,7 +172,19 @@ def plot_scatter(df, title, color_discrete_sequence = ['rgba(204, 204, 204, 0.95
                       legend = dict(title_text ='',
                                   font = dict(size=16)),
                       plot_bgcolor='rgba(0, 0, 0, 0)',
-                      paper_bgcolor='rgba(0, 0, 0, 0)',)
+                      paper_bgcolor='rgba(0, 0, 0, 0)',
+                      margin=(dict(b=100)))
+
+    if data_source !=False:
+        fig.add_annotation(
+                showarrow=False,
+                text=data_source,
+                font=dict(color='white',size=15),
+                xref='x domain',
+                x=0.0,
+                yref='y domain',
+                y=-0.3
+                )
 
     return fig
 
@@ -186,12 +211,14 @@ def plot_sankey_diagram(df, link, report_name):
     title_text=report_name,
     font_family="Arial Black",
     font_color="Black",
-    font_size=11,)
+    font_size=11,
+    )
 
-    note = f'Source:<a href="https://www.sec.gov/"">The SEC</a>  Data: <a href=link>{report_name}</a>'
+    data_source='<b>Source: <a href="https://ir.tesla.com/sec-filings">Tesla SEC filings</a></b>'
+
     fig.add_annotation(
         showarrow=False,
-        text=note,
+        text=data_source,
         font=dict(color='white',size=14),
         xref='x domain',
         x=0.0,
@@ -201,7 +228,7 @@ def plot_sankey_diagram(df, link, report_name):
 
     return fig
 
-def plot_choropleth(df):
+def plot_choropleth(df, data_source):
 
     fig = px.choropleth(df,
                         locations='state',
@@ -241,7 +268,7 @@ def plot_choropleth(df):
                             'count' : False,
                             'Year': False
                         },
-                        height=500,
+                        height=600,
                         width=900,
                         )
 
@@ -250,7 +277,7 @@ def plot_choropleth(df):
         showlegend=True,
         legend_title_text='<b>Total Number of Stations</b>',
         font=dict(size= 14, color= '#fff0f0'),
-        margin={"r":0,"t":40,"l":0,"b":0},
+        margin={"r":0,"t":40,"l":0,"b":200},
         legend=dict(orientation='v'),
         geo_bgcolor = 'rgba(0,0,0,0)'
     )
@@ -258,5 +285,16 @@ def plot_choropleth(df):
     # Adjust map geo options
     fig.update_geos(showlakes=True, lakecolor="lightskyblue",
                     subunitcolor='white')
+
+    if data_source !=False:
+        fig.add_annotation(
+                showarrow=False,
+                text=data_source,
+                font=dict(color='white',size=15),
+                xref='x domain',
+                x=0.0,
+                yref='y domain',
+                y=-0.5
+                )
 
     return fig

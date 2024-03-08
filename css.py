@@ -103,7 +103,10 @@ st.markdown('''
 ### css for market, share, station description
 st.markdown('''
             <style>
-            .market-description, .share-description, .station-description {
+            .sankey-description,
+            .market-description,
+            .share-description,
+            .station-description  {
                 color:white;
                 font-size:22px;
                 font-weight:bold;
@@ -111,34 +114,6 @@ st.markdown('''
             }
             </style>
             ''', unsafe_allow_html=True)
-
-# st.markdown('''
-#             <style>
-#             .market-description h3{
-#                 color:white;
-#             }
-#             .market-description p{
-#                 color:white;
-#                 font-size:25px;
-#                 font-weight:bold;
-#                 text-align: center;
-#             }
-#             </style>
-#             ''', unsafe_allow_html=True)
-
-# st.markdown('''
-#             <style>
-#             .market-description h3{
-#                 color:white;
-#             }
-#             .market-description p{
-#                 color:white;
-#                 font-size:25px;
-#                 font-weight:bold;
-#                 text-align: center;
-#             }
-#             </style>
-#             ''', unsafe_allow_html=True)
 
 ### css for scroll-botton
 st.markdown('''
@@ -174,3 +149,61 @@ st.markdown('''
         </style>
 
     ''', unsafe_allow_html=True)
+
+st.markdown('''
+            <style>
+            .custom-button div {
+                margin: 0;
+                padding: 0;
+                text-align: left;
+            }
+            </style>
+            ''', unsafe_allow_html=True)
+
+st.markdown('''
+            <style>
+            .section-list {
+                text-align: left;
+                margin-left: 40px;
+                margin-bottom:10px;
+            }
+            .section-list h2{
+                text-align: center;
+            }
+
+            .section-list a {
+                text-decoration: none;
+                color: #FFFFFF;
+                font-size:16px;
+                font-weight:bold;
+            }
+
+            .section-list span {
+
+                font-size: 25px;
+                margin-righ: 20px;
+            }
+            </style>
+
+            ''', unsafe_allow_html=True)
+
+st.markdown('''
+            <style>
+            .top-button {
+                text-align: center;
+                }
+
+             .top-button a {
+                text-decoration: none;
+                color: #FFFFFF;
+                font-size:16px;
+                font-weight:bold;
+                }
+            ''', unsafe_allow_html=True)
+
+
+
+
+
+
+
