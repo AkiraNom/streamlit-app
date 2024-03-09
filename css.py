@@ -1,8 +1,7 @@
 import streamlit as st
 
 
-
-## css for tesla html link button
+### css for pages
 st.markdown('''
             <style>
             html, body {
@@ -15,20 +14,24 @@ st.markdown('''
             color: #111;
             text-align: center;
 
-            }
+            }''', unsafe_allow_html=True)
 
+## css for tesla html link button
+st.markdown('''
+            <style>)
             .cta a {
-            text-decoration: none; !important
-            color: inherit;
+            color: #ffffff;
             }
 
             .cta {
+            text-decoration: none;
             position: relative;
             margin: auto;
             padding: 19px 22px;
             transition: all 0.2s ease;
             }
             .cta:before {
+                text-decoration: none;
             content: "";
             position: absolute;
             top: 0;
@@ -63,17 +66,15 @@ st.markdown('''
             transition: all 0.3s ease;
             }
             .cta:hover:before {
+            color: "#ffffff";
             width: 100%;
             background: orange;
-            text-decoration: none; !important
             }
             .cta:hover svg {
             transform: translateX(0);
-            text-decoration: none; !important
             }
             .cta:active {
             transform: scale(0.96);
-            text-decoration:none ; !important
             }
             </style>
                 ''', unsafe_allow_html=True)
