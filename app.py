@@ -1,10 +1,4 @@
-import pandas as pd
-import plotly.figure_factory as ff
-import plotly.graph_objects as go
 import streamlit as st
-import streamlit.components.v1 as components
-from streamlit_extras.stylable_container import stylable_container
-import yfinance as yf
 
 st.set_page_config(
     page_title='Tesla Analysis App',
@@ -13,9 +7,6 @@ st.set_page_config(
     menu_items={'About': '''Add description here'''}
 )
 
-import css
-import plot_func
-import sankey_data
 import utils
 import page_sections
 

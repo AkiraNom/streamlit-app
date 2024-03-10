@@ -1,5 +1,4 @@
 import streamlit as st
-import yfinance as yf
 
 import plot_func
 import sankey_data
@@ -7,7 +6,12 @@ import utils
 
 
 # Link to a CSS file
-st.markdown('<link rel="stylesheet" type="text/css" href="styles.css">', unsafe_allow_html=True)
+st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">',
+            unsafe_allow_html=True)
+
+# load local css
+utils.local_css('./test.css')
+
 
 ################## Top-page ###################
 def top_page():
@@ -41,7 +45,7 @@ def top_page():
 
 def stock_price(TICKER_INFO):
 
-    stock_price_1yr, stock_price_max, current_time = utils.get_stock_price(TICKER_INFO, period1='1y', period2='max')
+    stock_price_1yr, stock_price_max, current_time = utils.fetch_stock_price(TICKER_INFO, period1='1y', period2='max')
 
     tab1, tab2 = st.tabs(['Default', 'Colorblind friendly'])
     with tab1:
@@ -61,18 +65,27 @@ def stock_price(TICKER_INFO):
                         use_container_width=True)
 
 
+## css for font size in the tab
+st.markdown('''
+            <style>
+                .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+                font-size:1.5rem;
+                }
+            </style> ''',
+            unsafe_allow_html=True)
+
 def financials(TICKER_INFO):
 
-    df_cash_flow_yr = (utils.get_financial_data(TICKER_INFO, document_type='cash flow', period='annual')
+    df_cash_flow_yr = (utils.fetch_financial_data(TICKER_INFO, document_type='cash flow', period='annual')
                    .pipe(utils.subset_cash_flow_data)
                    )
-    df_cash_flow_q = (utils.get_financial_data(TICKER_INFO, document_type='cash flow', period='quarterly')
+    df_cash_flow_q = (utils.fetch_financial_data(TICKER_INFO, document_type='cash flow', period='quarterly')
                     .pipe(utils.subset_cash_flow_data)
                     )
-    df_financial_yr = (utils.get_financial_data(TICKER_INFO, document_type='financial', period='annual')
+    df_financial_yr = (utils.fetch_financial_data(TICKER_INFO, document_type='financial', period='annual')
                     .pipe(utils.subset_financial_data)
                     )
-    df_financial_q = (utils.get_financial_data(TICKER_INFO, document_type='financial', period='quarterly')
+    df_financial_q = (utils.fetch_financial_data(TICKER_INFO, document_type='financial', period='quarterly')
                     .pipe(utils.subset_financial_data)
                     )
 
@@ -155,7 +168,7 @@ def income_statement():
 def ev_sales():
 
     path_model_data = './data/EV_sales_by_model.csv'
-    df_model = utils.get_sales_data(path_model_data)
+    df_model = utils.read_sales_data(path_model_data)
 
     fig_model = plot_func.plot_bar_chart(df=df_model,
                                         title = 'EV models',
@@ -166,7 +179,7 @@ def ev_sales():
                                         )
 
     path_country_data = './data/EV_sales_by_country.csv'
-    df_country = utils.get_sales_data(path_country_data)
+    df_country = utils.read_sales_data(path_country_data)
 
     fig_country = plot_func.plot_bar_chart(df=df_country,
                                         title = 'EV sales by country',
@@ -216,7 +229,7 @@ def ev_sales():
 
 def ohter_ev_companies():
     path_share_data = './data/EV_share.csv'
-    df_share_subset = (utils.get_sales_data(path_share_data)
+    df_share_subset = (utils.read_sales_data(path_share_data)
                     .pipe(utils.subset_EV_company))
 
     # df_share_subset = utils.subset_EV_company(df_share)

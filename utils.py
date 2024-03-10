@@ -28,14 +28,14 @@ def tesla_html_link():
                     ''', unsafe_allow_html=True)
 
 # get stock price through yfinance
-def get_stock_price(ticker_info, period1='1y', period2='max'):
+def fetch_stock_price(ticker_info, period1='1y', period2='max'):
 
       return (ticker_info.history(period=period1),
               ticker_info.history(period=period2),
               datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 # get financial and cash flow data through yfinance
-def get_financial_data(ticker_info, document_type:str, period='annual'):
+def fetch_financial_data(ticker_info, document_type:str, period='annual'):
 
     if document_type == 'financial':
 
@@ -116,7 +116,7 @@ def subset_financial_data(df):
 
 # get sales data
 @st.cache_data(ttl=72000)
-def get_sales_data(file_path):
+def read_sales_data(file_path):
 
     df = pd.read_csv(file_path)
     df = df.set_index('Date')
@@ -368,5 +368,9 @@ def add_top_button(navigation_target: str):
         </div>
             ''', unsafe_allow_html=True)
 
+def local_css(path):
+  with open(path) as f:
+      css = f.read()
 
-
+  return st.markdown(f'<style>{css}</style>',
+                     unsafe_allow_html=True)
