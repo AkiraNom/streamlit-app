@@ -28,6 +28,7 @@ def tesla_html_link():
                     ''', unsafe_allow_html=True)
 
 # get stock price through yfinance
+@st.cache_data
 def fetch_stock_price(ticker_info, period1='1y', period2='max'):
 
       return (ticker_info.history(period=period1),
@@ -35,6 +36,7 @@ def fetch_stock_price(ticker_info, period1='1y', period2='max'):
               datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 # get financial and cash flow data through yfinance
+@st.cache_data
 def fetch_financial_data(ticker_info, document_type:str, period='annual'):
 
     if document_type == 'financial':
@@ -125,6 +127,10 @@ def read_sales_data(file_path):
 
 # image gallery for tesla model Y
 def image_slideshow():
+    '''
+    The codes originate from https://discuss.streamlit.io/t/automatic-slideshow/38342
+    by TomJohn
+    '''
     return components.html("""
       <!DOCTYPE html>
       <html>

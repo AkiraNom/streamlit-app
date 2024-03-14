@@ -10,7 +10,7 @@ st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs
             unsafe_allow_html=True)
 
 # load local css
-utils.local_css('./test.css')
+utils.local_css('./style.css')
 
 
 ################## Top-page ###################
@@ -324,18 +324,10 @@ def sidebar_contents():
 
 
         st.markdown("---")
-        st.markdown('''
-                    <h2>Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="20"></a>
-                    </h2>
-            ''',
-            unsafe_allow_html=True
-        )
 
-
-    with st.sidebar:
         st.markdown('''<div class="container">
                 <p>Follow : </p>
-                <a class="link linkedin" href="https://www.linkedin.com/company/">
+                <a class="link linkedin" href="https://www.linkedin.com">
                     <i class="fab fa-linkedin-in"></i>
                 </a>
                 <a class="link instagram" href="https://www.instagram.com/">
@@ -345,3 +337,10 @@ def sidebar_contents():
                     <i class="fab fa-youtube"></i>
                 </a>
             </div>''', unsafe_allow_html=True)
+
+        st.markdown('''
+                    <h2>Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="20"></a>
+                    </h2>
+            ''',
+            unsafe_allow_html=True
+        )

@@ -72,4 +72,3 @@ st.markdown('''<div class="top-button"><a href="#top-header">Back to Top</a> </d
 ########### Sidebar ################
 
 page_sections.sidebar_contents()
-
