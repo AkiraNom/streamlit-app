@@ -1,3 +1,5 @@
+base64
+datetime
 pandas
 plotly.express
 plotly.figure_factory
