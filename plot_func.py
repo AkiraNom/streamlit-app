@@ -73,7 +73,7 @@ def plot_candle_chart(fig, df, name, current_time,colorblind=False):
     fig.add_annotation(
             showarrow=False,
             text=source_note,
-            font=dict(color='white',size=17),
+            font=dict(color='black',size=17),
             xref='x domain',
             x=0.27,
             yref='y domain',
@@ -86,7 +86,7 @@ def plot_candle_chart(fig, df, name, current_time,colorblind=False):
     fig.add_annotation(
             showarrow=False,
             text=data_source,
-            font=dict(color='white',size=15),
+            font=dict(color='black',size=15),
             xref='x domain',
             x=0.0,
             yref='y domain',
@@ -129,7 +129,7 @@ def plot_bar_chart(df, title, y_axis_title, color_discrete_sequence = ['#7E909A'
         fig.add_annotation(
             showarrow=False,
             text=data_source,
-            font=dict(color='white',size=15),
+            font=dict(color='black',size=15),
             xref='x domain',
             x=0.0,
             yref='y domain',
@@ -169,7 +169,7 @@ def plot_scatter(df, title, color_discrete_sequence = ['rgba(204, 204, 204, 0.95
         fig.add_annotation(
                 showarrow=False,
                 text=data_source,
-                font=dict(color='white',size=15),
+                font=dict(color='black',size=15),
                 xref='x domain',
                 x=0.0,
                 yref='y domain',
@@ -209,7 +209,7 @@ def plot_sankey_diagram(df, link, report_name):
     fig.add_annotation(
         showarrow=False,
         text=data_source,
-        font=dict(color='white',size=14),
+        font=dict(color='black',size=14),
         xref='x domain',
         x=0.0,
         yref='y domain',
@@ -266,7 +266,7 @@ def plot_choropleth(df, data_source):
     fig.update_layout(
         showlegend=True,
         legend_title_text='<b>Total Number of Stations</b>',
-        font=dict(size= 14, color= '#fff0f0'),
+        font=dict(size= 14, color= 'black'),
         margin={"r":0,"t":40,"l":0,"b":200},
         legend=dict(orientation='v'),
         geo_bgcolor = 'rgba(0,0,0,0)'
@@ -274,13 +274,13 @@ def plot_choropleth(df, data_source):
 
     # Adjust map geo options
     fig.update_geos(showlakes=True, lakecolor="lightskyblue",
-                    subunitcolor='white')
+                    subunitcolor='black')
 
     if data_source !=False:
         fig.add_annotation(
                 showarrow=False,
                 text=data_source,
-                font=dict(color='white',size=15),
+                font=dict(color='black',size=15),
                 xref='x domain',
                 x=0.0,
                 yref='y domain',
