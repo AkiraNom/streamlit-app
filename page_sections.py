@@ -3,7 +3,7 @@ import streamlit as st
 import plot_func
 import sankey_data
 import utils
-
+import plotly.graph_objects as go
 
 # Link to a CSS file
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">',
@@ -45,25 +45,32 @@ def top_page():
 
 def stock_price(TICKER_INFO):
 
-    stock_price_1yr, stock_price_max, current_time = utils.fetch_stock_price(TICKER_INFO, period1='1y', period2='max')
+    stock_price_max, current_time = utils.fetch_stock_price(TICKER_INFO, period='max')
+    periods = {'1M':30,'3M': 90, '1Y': 365, '3Y': 3*365, 'MAX': None}
+    dataframe_dict = {}
+    for name, period in zip(periods.keys(), periods.values()):
 
+        if name != 'MAX':
+            dataframe_name = f'stock_price_{name}'
+            dataframe_name = utils.subset_stock_data_period(stock_price_max, period)
+
+            dataframe_dict[name] = dataframe_name
+
+        else:
+            dataframe_dict[name] = stock_price_max
+
+    # stock_price_1yr = utils.subset_stock_data_period(stock_price_max, 365)
     tab1, tab2 = st.tabs(['Default', 'Colorblind friendly'])
     with tab1:
 
-        st.plotly_chart(plot_func.plot_candle_chart(stock_price_1yr,
-                                                    stock_price_max,
-                                                    current_time,
-                                                    colorblind=False),
-                        use_container_width=True)
+        fig = go.Figure()
+        for period, df in zip(dataframe_dict.keys(), dataframe_dict.values()):
+            plot_func.plot_candle_chart(fig, df, period, current_time)
+
+        st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
-
-        st.plotly_chart(plot_func.plot_candle_chart(stock_price_1yr,
-                                                    stock_price_max,
-                                                    current_time,
-                                                    colorblind=True),
-                        use_container_width=True)
-
+        st.plotly_chart(plot_func.change_candlestick_color(fig), use_container_width=True)
 
 ## css for font size in the tab
 st.markdown('''

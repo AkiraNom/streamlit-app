@@ -28,15 +28,19 @@ def tesla_html_link():
                     ''', unsafe_allow_html=True)
 
 # get stock price through yfinance
-@st.cache_data
-def fetch_stock_price(ticker_info, period1='1y', period2='max'):
+# @st.cache_data
+def fetch_stock_price(ticker_info, period='max'):
 
-      return (ticker_info.history(period=period1),
-              ticker_info.history(period=period2),
-              datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+      return (ticker_info.history(period=period),
+              datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z"))
+
+def subset_stock_data_period(df, period):
+
+    start = df.index[-1] - pd.Timedelta(period, 'day')
+
+    return df.loc[start:,:]
 
 # get financial and cash flow data through yfinance
-@st.cache_data
 def fetch_financial_data(ticker_info, document_type:str, period='annual'):
 
     if document_type == 'financial':

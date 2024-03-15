@@ -24,8 +24,8 @@ utils.add_scroll_button('#header-1')
 st.header('Stock price', anchor='header-1', divider='blue')
 
 TICKER = 'TSLA'
-# TICKER_INFO = yf.Ticker(TICKER)
-# page_sections.stock_price(TICKER_INFO)
+TICKER_INFO = yf.Ticker(TICKER)
+page_sections.stock_price(TICKER_INFO)
 
 utils.add_scroll_button('#header-2')
 
@@ -34,7 +34,6 @@ utils.add_scroll_button('#header-2')
 st.header('Financials', anchor='header-2', divider='blue')
 
 # page_sections.financials(TICKER_INFO)
-
 utils.add_scroll_button('#header-3')
 
 ########## Header 3 ####################

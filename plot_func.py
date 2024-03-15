@@ -1,53 +1,27 @@
+import datetime
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import plotly.express as px
 
-def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
+# def plot_candle_chart(fig, df_1yr, df_max, current_time, colorblind=False):
+def plot_candle_chart(fig, df, name, current_time,colorblind=False):
 
-    if colorblind:
-        increasing_line_color='steelblue'
-        increasing_fillcolor='steelblue'
-        decreasing_line_color='darkorange'
-        decreasing_fillcolor='darkorange'
-
+    if name == '1M':
+        visible = True
     else:
-        increasing_line_color='green'
-        increasing_fillcolor='green'
-        decreasing_line_color='red'
-        decreasing_fillcolor='red'
-
-    fig = go.Figure()
+        visible = False
 
     # Add Traces
     fig.add_trace(
-        go.Candlestick(x=df_1yr.index,
-                        open=df_1yr['Open'],
-                        high=df_1yr['High'],
-                        low=df_1yr['Low'],
-                        close=df_1yr['Close'],
-                        name='Candle_1y',
-                        visible = True,
-                        increasing_line_color=increasing_line_color,
-                        increasing_fillcolor=increasing_fillcolor,
-                        decreasing_line_color=decreasing_line_color,
-                        decreasing_fillcolor=decreasing_fillcolor,
+        go.Candlestick(x=df.index,
+                        open=df['Open'],
+                        high=df['High'],
+                        low=df['Low'],
+                        close=df['Close'],
+                        name=f'Candle_{name}',
+                        visible = visible,
                         ),
-        #   row=1, col=1,
                         )
-
-    fig.add_trace(
-        go.Candlestick(x=df_max.index,
-                        open=df_max['Open'],
-                        high=df_max['High'],
-                        low=df_max['Low'],
-                        close=df_max['Close'],
-                        name='Candle_max',
-                        visible = False,
-                        increasing_line_color=increasing_line_color,
-                        increasing_fillcolor=increasing_fillcolor,
-                        decreasing_line_color=decreasing_line_color,
-                        decreasing_fillcolor=decreasing_fillcolor,
-                        ))
 
     fig.update_layout(
         updatemenus=[
@@ -59,14 +33,25 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
                 y=1.2,
                 name='test',
                 buttons=[
+                    dict(label="<b>1M</b>",
+                        method="update",
+                        args=[ {"visible": [True,False,False,False,False]}],
+                        ),
+                    dict(label="<b>3M</b>",
+                        method="update",
+                        args=[ {"visible": [False, True,False,False,False]}],
+                        ),
                     dict(label="<b>1Y</b>",
                         method="update",
-                        args=[ {"visible": [True,False]}],
-
+                        args=[ {"visible": [False, False,True,False,False]}],
+                        ),
+                    dict(label="<b>3Y</b>",
+                        method="update",
+                        args=[ {"visible": [False, False,False,True,False]}],
                         ),
                     dict(label="<b>MAX</b>",
                         method="update",
-                        args=[{"visible": [False,True]}]
+                        args=[{"visible": [False, False,False,False,True]}]
                         ),
                     ],
                 font =
@@ -90,13 +75,13 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
             text=source_note,
             font=dict(color='white',size=17),
             xref='x domain',
-            x=0.25,
+            x=0.27,
             yref='y domain',
-            y=1.16,
+            y=1.18,
             )
 
     # footer
-    data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a> Time : {current_time} (UTC)</b>'
+    data_source = f'<b>Source: <a href="https://www.yahoofinance.com/">Yahoo! Finance </a> Time : {current_time}</b>'
 
     fig.add_annotation(
             showarrow=False,
@@ -105,9 +90,16 @@ def plot_candle_chart(df_1yr, df_max, current_time, colorblind=False):
             xref='x domain',
             x=0.0,
             yref='y domain',
-            y=-0.8
+            y=-0.4
             )
 
+    return fig
+
+def change_candlestick_color(fig):
+
+    for i in range(len(fig.data)):
+        fig.data[i].increasing.line.color='steelblue'
+        fig.data[i].decreasing.line.color='darkorange'
 
     return fig
 
