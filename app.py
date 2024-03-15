@@ -33,7 +33,8 @@ utils.add_scroll_button('#header-2')
 
 st.header('Financials', anchor='header-2', divider='blue')
 
-# page_sections.financials(TICKER_INFO)
+page_sections.financials(TICKER_INFO)
+
 utils.add_scroll_button('#header-3')
 
 ########## Header 3 ####################

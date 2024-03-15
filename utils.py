@@ -1,8 +1,10 @@
 import base64
 import datetime
+import os
 import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
+import yfinance as yf
 
 def read_image(path):
     """image from local file"""
@@ -27,12 +29,34 @@ def tesla_html_link():
             <div><br></div>
                     ''', unsafe_allow_html=True)
 
+def check_file_availability(path):
+    '''
+    Check if a file is locally avaiable
+    '''
+    return os.path.isfile(path)
+
 # get stock price through yfinance
 # @st.cache_data
-def fetch_stock_price(ticker_info, period='max'):
+def get_stock_price(ticker_info):
+    '''
+    get the stock price data for the candlestick plot.
 
-      return (ticker_info.history(period=period),
-              datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z"))
+    If there is a csv file in the data folder, use the csv.
+    If not, fetch the data trhough the yahoo finance
+    '''
+
+    file_path = 'data/stock_price.csv'
+
+    if check_file_availability(file_path):
+        df = read_table_data(file_path, utc=True)
+
+        current_time = df.index[-1].strftime("%Y-%m-%d %H:%M:%S %Z")
+
+    else:
+        df = ticker_info.history(ticker_info, period='max')
+        current_time = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
+
+    return df, current_time
 
 def subset_stock_data_period(df, period):
 
@@ -40,9 +64,28 @@ def subset_stock_data_period(df, period):
 
     return df.loc[start:,:]
 
-# get financial and cash flow data through yfinance
-def fetch_financial_data(ticker_info, document_type:str, period='annual'):
+# get financial and cash flow data
+def get_financial_data(file_path, ticker_info, document_type:str, period='annual'):
+    '''
+      Get financial and cash flow data.
+      If there are csv files in the data folder, use the data.
+      If not, fetch the data through yahoo finance.
+    '''
 
+    if check_file_availability(file_path):
+
+      df = read_table_data(file_path)
+
+    else:
+
+      df = fetch_financial_data(ticker_info, document_type, period)
+
+    return df
+
+def fetch_financial_data(ticker_info, document_type:str, period='annual'):
+    '''
+    fetch financial data trhough yahoo finance
+    '''
     if document_type == 'financial':
 
         if period == 'annual':
@@ -101,7 +144,7 @@ def subset_cash_flow_data(df):
   df.rename(columns=lambda x: x.replace('Cash Flow From Continuing ' ,'').replace('Activities',''), inplace=True)
 
   # set data type as int
-  df = df.astype('Int64')
+  # df = df.astype('Int64')
 
   return df
 
@@ -120,12 +163,16 @@ def subset_financial_data(df):
 
     return df
 
-# get sales data
-@st.cache_data(ttl=72000)
-def read_sales_data(file_path):
+# get table data
+@st.cache_data()
+def read_table_data(file_path, utc=False):
 
-    df = pd.read_csv(file_path)
-    df = df.set_index('Date')
+    df = pd.read_csv(file_path, index_col=0)
+
+    if utc == True:
+      df.index = pd.to_datetime(df.index, utc=utc)
+    else:
+      None
 
     return df
 

@@ -1,9 +1,9 @@
+import plotly.graph_objects as go
 import streamlit as st
 
 import plot_func
 import sankey_data
 import utils
-import plotly.graph_objects as go
 
 # Link to a CSS file
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">',
@@ -45,7 +45,8 @@ def top_page():
 
 def stock_price(TICKER_INFO):
 
-    stock_price_max, current_time = utils.fetch_stock_price(TICKER_INFO, period='max')
+    stock_price_max, current_time = utils.get_stock_price(TICKER_INFO)
+
     periods = {'1M':30,'3M': 90, '1Y': 365, '3Y': 3*365, 'MAX': None}
     dataframe_dict = {}
     for name, period in zip(periods.keys(), periods.values()):
@@ -53,13 +54,11 @@ def stock_price(TICKER_INFO):
         if name != 'MAX':
             dataframe_name = f'stock_price_{name}'
             dataframe_name = utils.subset_stock_data_period(stock_price_max, period)
-
             dataframe_dict[name] = dataframe_name
 
         else:
             dataframe_dict[name] = stock_price_max
 
-    # stock_price_1yr = utils.subset_stock_data_period(stock_price_max, 365)
     tab1, tab2 = st.tabs(['Default', 'Colorblind friendly'])
     with tab1:
 
@@ -83,16 +82,28 @@ st.markdown('''
 
 def financials(TICKER_INFO):
 
-    df_cash_flow_yr = (utils.fetch_financial_data(TICKER_INFO, document_type='cash flow', period='annual')
+    df_cash_flow_yr = (utils.get_financial_data(file_path='./data/df_cash_flow_yr.csv',
+                                                ticker_info=TICKER_INFO,
+                                                document_type='cash flow',
+                                                period='annual')
                    .pipe(utils.subset_cash_flow_data)
                    )
-    df_cash_flow_q = (utils.fetch_financial_data(TICKER_INFO, document_type='cash flow', period='quarterly')
+    df_cash_flow_q = (utils.get_financial_data(file_path='./data/df_cash_flow_q.csv',
+                                               ticker_info=TICKER_INFO,
+                                               document_type='cash flow',
+                                               period='quarterly')
                     .pipe(utils.subset_cash_flow_data)
                     )
-    df_financial_yr = (utils.fetch_financial_data(TICKER_INFO, document_type='financial', period='annual')
+    df_financial_yr = (utils.get_financial_data(file_path='./data/df_financial_yr.csv',
+                                                ticker_info=TICKER_INFO,
+                                                document_type='financial',
+                                                period='annual')
                     .pipe(utils.subset_financial_data)
                     )
-    df_financial_q = (utils.fetch_financial_data(TICKER_INFO, document_type='financial', period='quarterly')
+    df_financial_q = (utils.get_financial_data(file_path='./data/df_financial_q.csv',
+                                               ticker_info=TICKER_INFO,
+                                               document_type='financial',
+                                               period='quarterly')
                     .pipe(utils.subset_financial_data)
                     )
 
@@ -175,7 +186,7 @@ def income_statement():
 def ev_sales():
 
     path_model_data = './data/EV_sales_by_model.csv'
-    df_model = utils.read_sales_data(path_model_data)
+    df_model = utils.read_table_data(path_model_data)
 
     fig_model = plot_func.plot_bar_chart(df=df_model,
                                         title = 'EV models',
@@ -186,7 +197,7 @@ def ev_sales():
                                         )
 
     path_country_data = './data/EV_sales_by_country.csv'
-    df_country = utils.read_sales_data(path_country_data)
+    df_country = utils.read_table_data(path_country_data)
 
     fig_country = plot_func.plot_bar_chart(df=df_country,
                                         title = 'EV sales by country',
@@ -236,7 +247,7 @@ def ev_sales():
 
 def ohter_ev_companies():
     path_share_data = './data/EV_share.csv'
-    df_share_subset = (utils.read_sales_data(path_share_data)
+    df_share_subset = (utils.read_table_data(path_share_data)
                     .pipe(utils.subset_EV_company))
 
     # df_share_subset = utils.subset_EV_company(df_share)
